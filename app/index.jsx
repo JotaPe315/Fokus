@@ -1,6 +1,8 @@
 import {useState} from "react";
 import { Text, View, StyleSheet, Image, Pressable } from "react-native";
-
+import { FokusButton } from "../components/fokusButton/index.jsx";
+import { ActionButton } from "../components/actionButton/index.jsx";
+import { TimerFokus } from "../components/timerFokus/index.jsx";
 const pomodoro = [
     {
       id: 'focus',
@@ -33,24 +35,19 @@ export default function Index() {
       <View style={styles.actions}>
         <View style={styles.context}>
           {pomodoro.map(p => (
-            <Pressable 
-            key={p.id}
-            style={ timerType.id === p.id ? styles.contextButtonActive : null }
-            onPress={() => setTimerType(p)}
-            >
-            <Text style={styles.contextButtonText}>
-              {p.display}
-            </Text>
-          </Pressable>
+            <ActionButton
+              key={p.id}
+              active={timerType.id === p.id}
+              onPress={() => setTimerType(p)}
+              display={p.display}
+            />
           ))}
           
         </View>
-        <Text style={styles.timer}>
-          { new Date(timerType.initialValue * 1000).toLocaleTimeString('pt-BR', { minute: '2-digit', second: '2-digit' }) }
-        </Text>
-        <Pressable style={styles.button}>
-          <Text style={styles.buttonText}>Começar</Text>
-        </Pressable>
+        <TimerFokus
+          seconds={timerType.initialValue}
+        />
+        <FokusButton />
       </View>
       <View style={styles.footer}>
         <Text style={styles.footerText}>
@@ -87,33 +84,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     
-  },
-  contextButtonActive: {
-    backgroundColor: "#144480",
-    borderRadius: 8,
-  },
-  contextButtonText: {
-    color: "#fff",
-    fontSize: 12.5,
-    padding: 8,
-  },
-  timer: {
-    fontSize: 54,
-    color: "#fff",
-    textAlign: "center",
-    fontWeight: "bold"
-
-  },
-  button: {
-    backgroundColor: "#B872FF",
-    borderRadius: 32,
-    padding: 8
-  },
-  buttonText: {
-    color: "#021123",
-    fontSize: 18,
-    textAlign: "center",
-    fontFamily: "Montserrat",
   },
   footer: {
     padding: 16,
