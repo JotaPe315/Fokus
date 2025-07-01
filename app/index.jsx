@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useRef, useState} from "react";
 import { Text, View, StyleSheet, Image, Pressable } from "react-native";
 import { FokusButton } from "../components/fokusButton/index.jsx";
 import { ActionButton } from "../components/actionButton/index.jsx";
@@ -6,19 +6,19 @@ import { TimerFokus } from "../components/timerFokus/index.jsx";
 const pomodoro = [
     {
       id: 'focus',
-      initialValue: 25 * 60,
+      initialValue: 25 * 60, // 25 minutos em segundos
       image: require("./foco.png"),
       display: 'Foco'
     },
     {
       id: 'short',
-      initialValue: 5 * 60,
+      initialValue: 5 * 60, // 5 minutos em segundos
       image: require("./short.png"),
       display: 'Pausa curta'
     },
     {
       id: 'long',
-      initialValue: 15 * 60,
+      initialValue: 15 * 60, // 15 minutos em segundos
       image: require("./long.png"),
       display: 'Pausa longa'
     }
@@ -26,7 +26,52 @@ const pomodoro = [
 
 export default function Index() {
 
-  const[timerType, setTimerType] = useState(pomodoro[0]);
+  const [timerType, setTimerType] = useState(pomodoro[0]);
+
+  const [timerButton, setTimerButton] = useState(false);
+
+  const [seconds, setSeconds] = useState(timerType.initialValue);
+
+  const timerRef = useRef(null);
+
+  const clear = () => {
+    if (timerRef.current != null) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+      setTimerButton(false);
+
+    }
+  }
+
+  const toggleTimerType = (newTimerType) => {
+    setTimerType(newTimerType);
+    setSeconds(newTimerType.initialValue); // Reseta os segundos para o valor inicial do novo timer
+    clear(); // Limpa o timer atual se houver
+
+  }
+
+  const toggleTimer = () => {
+    if (timerRef.current) {
+      // pausar
+      clear();
+      return;
+    }
+
+    setTimerButton(true);
+
+    const id = setInterval(() => {
+      console.log("timer rolando");
+      setSeconds(oldValue => {
+        if (oldValue <= 0) {
+          clear();
+          return timerType.initialValue; // Reseta o timer para o valor inicial
+        }
+        return oldValue - 1;
+      });
+
+    }, 1000);
+    timerRef.current = id;
+  }
 
   return (
     <View style={styles.container}>
@@ -38,16 +83,21 @@ export default function Index() {
             <ActionButton
               key={p.id}
               active={timerType.id === p.id}
-              onPress={() => setTimerType(p)}
+              onPress={() => toggleTimerType(p)}
               display={p.display}
             />
+            
           ))}
           
         </View>
         <TimerFokus
-          seconds={timerType.initialValue}
+          seconds={seconds}
         />
-        <FokusButton />
+        <FokusButton
+          title={timerButton ? "Pausar" : "Continuar"}
+          onPress={toggleTimer}
+
+        />
       </View>
       <View style={styles.footer}>
         <Text style={styles.footerText}>
