@@ -1,24 +1,25 @@
 import {useRef, useState} from "react";
-import { Text, View, StyleSheet, Image, Pressable } from "react-native";
+import { Text, View, StyleSheet, Image } from "react-native";
 import { FokusButton } from "../components/fokusButton/index.jsx";
 import { ActionButton } from "../components/actionButton/index.jsx";
 import { TimerFokus } from "../components/timerFokus/index.jsx";
+import { IconPlay, IconPause } from "../components/Icons/index.jsx";
 const pomodoro = [
     {
       id: 'focus',
-      initialValue: 25 * 60, // 25 minutos em segundos
+      initialValue: 25, // 25 minutos em segundos
       image: require("./foco.png"),
       display: 'Foco'
     },
     {
       id: 'short',
-      initialValue: 5 * 60, // 5 minutos em segundos
+      initialValue: 5, // 5 minutos em segundos
       image: require("./short.png"),
       display: 'Pausa curta'
     },
     {
       id: 'long',
-      initialValue: 15 * 60, // 15 minutos em segundos
+      initialValue: 15, // 15 minutos em segundos
       image: require("./long.png"),
       display: 'Pausa longa'
     }
@@ -60,7 +61,6 @@ export default function Index() {
     setTimerButton(true);
 
     const id = setInterval(() => {
-      console.log("timer rolando");
       setSeconds(oldValue => {
         if (oldValue <= 0) {
           clear();
@@ -94,7 +94,8 @@ export default function Index() {
           seconds={seconds}
         />
         <FokusButton
-          title={timerButton ? "Pausar" : "Continuar"}
+          title={timerButton ? "Pausar" : "Começar"}
+          icon={timerButton ? <IconPause /> : <IconPlay />}
           onPress={toggleTimer}
 
         />
