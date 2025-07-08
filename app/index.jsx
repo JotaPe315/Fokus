@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { Image, StyleSheet, Text, View } from "react-native";
-import { FokusButton } from "../components/fokusButton/index.jsx";
+import { FokusButton } from "../components/FokusButton/index.jsx";
 
 export default function Index() {
   return (
