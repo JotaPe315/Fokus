@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { FokusButton } from "../../components/FokusButton";
 import TaskItem from "../../components/TaskItem";
 import { IconPlus } from "../../components/Icons";
+import { router } from "expo-router";
 export default function Tasks() {
   return (
     <View style={styles.container}>
@@ -29,7 +30,8 @@ export default function Tasks() {
           title="Adicionar Tarefa"
           icon={<IconPlus />}
           outline
-        />
+          onPress={() => router.navigate("/add-task")}
+        />;
       </View>
       <View style={styles.footer}>
         <Text style={styles.footerText}>
