@@ -1,7 +1,24 @@
-import { KeyboardAvoidingView, Pressable, StyleSheet, Text, TextInput, View, Platform, TouchableWithoutFeedback, Keyboard } from "react-native"
+import { KeyboardAvoidingView, Pressable, StyleSheet, Text, TextInput, View, Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { IconSave } from "../../components/Icons";
+import useTaskContext from "../../components/context/useTaskContext";
+import { useState } from "react";
+import { router } from "expo-router";
 
 export default function AddTask() {
+
+    const [description, setDescription] = useState()
+
+    const { addTask } = useTaskContext()
+
+    const submitTask = () => {
+        if (!description) {
+            return
+        }
+        addTask(description)
+        setDescription('')
+        router.navigate('/tasks')
+    }
+
     return (
         <KeyboardAvoidingView
             style = {{flex: 1}}
@@ -23,9 +40,11 @@ export default function AddTask() {
                             style={styles.inputContainer}
                             numberOfLines={10}
                             multiline={true}
+                            value={description}
+                            onChangeText={setDescription}
                         />
                         <View style={styles.button}>
-                            <Pressable>
+                            <Pressable onPress={submitTask}>
                                 <IconSave />
                             </Pressable>
                         </View>

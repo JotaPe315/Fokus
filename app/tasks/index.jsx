@@ -1,45 +1,44 @@
-import { StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { FokusButton } from "../../components/FokusButton";
 import TaskItem from "../../components/TaskItem";
 import { IconPlus } from "../../components/Icons";
 import { router } from "expo-router";
+import useTaskContext from "../../components/context/useTaskContext";
 export default function Tasks() {
+
+  const { tasks } = useTaskContext()
+
   return (
     <View style={styles.container}>
-      <View style={styles.body}>
-        <Text style={styles.text}>
-          Lista de Tarefas:
-        </Text>
-        <View style={styles.taskList}>
-          <TaskItem
-            completed
-            text="Estudar Inglês"
-          />
-          <TaskItem
-            text="Estudar Python"
-          />
-          <TaskItem
-            completed
-            text="Estudar JavaScript"
-          />
-          <TaskItem
-            text="Academia"
-          />
-        </View>
-        <FokusButton
-          title="Adicionar Tarefa"
-          icon={<IconPlus />}
-          outline
-          onPress={() => router.navigate("/add-task")}
-        />;
-      </View>
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>
-          Projeto fictício e sem fins comerciais.
-        </Text>
-        <Text style={styles.footerText}>
-          Desenvolvido por Alura.
-        </Text>
+      <View style={styles.taskList}>
+        {/* {tasks.map(t => {
+            return (
+              <TaskItem
+                completed={t.completed}
+                text={t.description}
+                key={t.id}
+              />
+            )
+          })} */}
+        <FlatList
+          data={tasks}
+          renderItem={({ item }) => <TaskItem
+            completed={item.completed}
+            text={item.description}
+            key={item.id}
+          />}
+          keyExtractor={item => item.id}
+          ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+          ListHeaderComponent={<Text style={styles.text}>Lista de Tarefas:</Text>}
+          ListFooterComponent={<View style={{ marginTop: 16, alignItems: "center" }}>
+            <FokusButton
+              title="Adicionar Tarefa"
+              icon={<IconPlus />}
+              outline
+              onPress={() => router.navigate("/add-task")}
+            />
+          </View>}
+        />
       </View>
     </View>
   );
@@ -50,17 +49,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#021123",
     alignItems: "center",
-    justifyContent: "space-between",
-  },
-  body: {
-    width: "100%",
-    alignItems: "center",
   },
   text: {
+    textAlign: "center",
     color: "#FFF",
     fontSize: 26,
-    fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 16
+
 
   },
   taskList: {
@@ -71,15 +66,4 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     gap: 8,
   },
-  footer: {
-    paddingBottom: 40,
-    alignItems: "center",
-    width: "80%",
-  },
-  footerText: {
-    color: "#98A0A8",
-    fontSize: 12.5,
-    textAlign: "center",
-    fontFamily: "Montserrat",
-  }
 });
