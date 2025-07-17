@@ -1,10 +1,45 @@
-import { createContext, useState } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createContext, useEffect, useState } from "react";
 
 export const TaskContext = createContext()
 
-export function TasksProvider ({ children }) {
+export function TasksProvider({ children }) {
 
     const [tasks, setTasks] = useState([])
+    const [IsLoaded, setIsLoaded] = useState(false)
+
+    useEffect(() => {
+        const getData = async () => {
+            try {
+                const jsonValue = await AsyncStorage.getItem('fokus-tasks');
+                const loadedData = jsonValue != null ? JSON.parse(jsonValue) : [];
+                setTasks(loadedData)
+                setIsLoaded(true)
+            } catch (e) {
+                // error reading value
+            }
+        };
+        getData()
+
+
+    }, [])
+
+    useEffect(() => {
+        const storeData = async (value) => {
+            try {
+                const jsonValue = JSON.stringify(value);
+                await AsyncStorage.setItem('fokus-tasks', jsonValue);
+            } catch (e) {
+                // saving error
+            }
+        };
+        if (IsLoaded) {
+            storeData(tasks);
+
+        }
+
+
+    }, [tasks])
 
     const addTask = (description) => {
         console.log("Tarefa nova")
@@ -17,6 +52,7 @@ export function TasksProvider ({ children }) {
                 }
             ]
         })
+        //chamar persistência
     }
 
     const toggleTaskCompleted = (id) => {
@@ -28,22 +64,24 @@ export function TasksProvider ({ children }) {
                 return t
             })
         })
+        //chamar persistência
     }
 
     const deleteTask = (id) => {
         setTasks(oldState => {
             return oldState.filter(t => t.id != id)
         })
+        //chamar persistência
     }
 
-    return(
+    return (
         <TaskContext.Provider value={{
             tasks,
             addTask,
             toggleTaskCompleted,
             deleteTask
         }}>
-            { children }
+            {children}
         </TaskContext.Provider>
     )
 
